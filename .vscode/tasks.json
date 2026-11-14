@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "SmartOps: final test evaluation",
+			"type": "shell",
+			"command": ".venv/Scripts/python.exe",
+			"args": [
+				"-m",
+				"smartops.cli",
+				"final-test"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}

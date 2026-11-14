@@ -1,0 +1,17 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.env
+mlruns/
+submission_backups/
+
+# Data is downloaded by scripts, never committed. Keep the folder skeleton.
+data/**
+!data/**/
+!data/**/.gitkeep
+# The checksum of the raw download is committed so everyone can verify the same file.
+!data/raw/SHA256SUMS
