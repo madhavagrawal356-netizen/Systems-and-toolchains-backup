@@ -1,13 +1,13 @@
 {
-  "parent_run_id": "67e42a16932940718af65147f85a874c",
+  "parent_run_id": "1ba4b8f0b32c4c0389375a41859d4b2b",
   "model_run_ids": {
-    "momentum": "a1ad88178ced4e32aabef2e82df059c2",
-    "linear": "8108a55cddf247eab1a874c38b21ba1f",
-    "lightgbm": "dfff5310152e4db0af3e1aa6b8c70362",
-    "quantile_mlp": "7f8bb4ca3f8c4f9582dc9754c1d33921"
+    "momentum": "4e87755b5a4640acb1e9cb92b926ed2b",
+    "linear": "30b5f0ed02c84145a2b81baaa9aa4fe7",
+    "lightgbm": "bc081eebb7f7484b9134f676336ffb7b",
+    "quantile_mlp": "0204acee91924d7a86f44ff9aa6e88a7"
   },
   "features_sha256": "e257c92fcb0901d9ec5c857af317288536b1f5365e62fcd5f103604655396d5c",
-  "source_sha256": "96033765e340d61ecfd1b30863dd94efa01747775d6100bbd5e71579eee400f0",
+  "source_sha256": "1fdedf6610ce7dfe44f3cf6a03bfeccf642bfec32114cc3bc320140fc7a04316",
   "seed": 42,
   "persistence_p90_change_error": 7.300000000000004,
   "protocol": "train-only fit; validation-only selection; no train-plus-val refit",
@@ -95,8 +95,8 @@
     "lightgbm": "4.7.0"
   },
   "sha256": {
-    "preprocessors.pkl": "0186fed1514663e39b78311bbdc949e86a7bb0a751112d23c193e2181eb2fcea",
-    "lightgbm.txt": "af18f93d5ffa0930170793b01d162e29eb371d68d5c2536e8bd4735fd80ed958",
-    "mlp_weights.pt": "0c1d8ff64c477c36a34ae80a17d0b802ac85a601c4baa511f6b2b27e293549f5"
+    "preprocessors.pkl": "1fb07a96995113b388ec958defc670f2fbf046137cdddf8fb1ce9a4a93505281",
+    "lightgbm.txt": "4b4dc17ffe4479d231b0dbdf25323deea4f7d2b735e3f728f43856d105de247d",
+    "mlp_weights.pt": "56f7c9effc547b13e4c42c68ad4c8c67030e3cc16ad04dccd57a22b0b9e60b02"
   }
 }

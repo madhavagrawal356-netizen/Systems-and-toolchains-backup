@@ -176,28 +176,27 @@ coverage of a central 90% interval, which would require p05 and p95.
 
 ## Official validation results
 
-The audited Stage 1/2 rerun uses the shared scoring harness in
+The 2026-11-14 post-holiday-fix rerun uses the shared scoring harness in
 [evaluate.py](src/smartops/evaluate.py). Every official model and persistence use
 **100,151 identical validation rows** from training hospitals and **25,278 identical
 validation rows** from held-out hospitals. Fits use only training weeks and training
-hospitals; validation selects iterations/epochs. Final test results are reported below.
+hospitals; validation selects iterations/epochs. The test results below are from the
+earlier pre-fix evaluation and have not been rerun.
 
 | Model | Val rows | Val MAE (beds) | Skill vs. persistence | Unseen-hospital skill |
 |---|---:|---:|---:|---:|
 | Persistence | 100,151 | 4.748 | 0.0% | 0.0% |
 | Momentum | 100,151 | 4.632 | 2.4% | 2.5% |
-| Linear | 100,151 | 4.566 | 3.8% | 4.2% |
-| LightGBM check | 100,151 | 4.421 | 6.9% | 7.3% |
-| Quantile MLP median | 100,151 | 4.467 | 5.9% | 6.2% |
+| Linear | 100,151 | 4.555 | 4.1% | 4.4% |
+| LightGBM check | 100,151 | 4.381 | 7.7% | 8.0% |
+| Quantile MLP median | 100,151 | 4.445 | 6.4% | 6.7% |
 
-The MLP's 80% interval covers 80.2% of validation targets, within the proposed
-77–83% band. Its p90 staffing shortfall rate is 10.5%, versus 9.2% for persistence
-plus its training-error p90. Mean shortfall and idle beds are lower (0.41 vs. 0.81
-and 7.04 vs. 8.13), but the proposed staffing check still fails because the shortfall
-rate is higher. A 90% interval is not available from p10/p50/p90; the report marks
-that check unavailable. The MLP differs slightly from the earlier 4.460 result
-because unseen states now have a reserved embedding code instead of sharing the
-first training state's code.
+The MLP's 80% interval covers 80.42% of training-hospital validation targets and
+80.26% for held-out hospitals, both within the proposed 77-83% band. Its p90 staffing
+shortfall rate is 10.41% and 10.50%, respectively, versus 9.20% and 8.96% for
+persistence plus the training-error p90. Mean shortfall and idle beds are lower for
+the MLP in both groups, but the staffing check still fails because shortfall frequency
+is higher. A 90% interval is unavailable from p10/p50/p90.
 
 ### Validation artifacts and tracking
 
@@ -238,13 +237,12 @@ Checksums detect accidental file damage; they do not establish who created a bun
 The feature table and cleaned history must match the fit, because saved preprocessors
 do not replace the shared feature-generation code.
 
-We created a validation-only handoff bundle on 2026-11-14 in parent run
-`67e42a16932940718af65147f85a874c`. Its predictions and metrics are stored separately
-under `data/processed/model_persistence_validation/20261114T175552Z/`. Reloading
-reproduced all **125,429 validation rows exactly**, including every MLP quantile;
-the new predictions also match our preserved validation predictions exactly.
-`reload_verification.json` in that directory records the comparison, with timestamp
-units normalized after Parquet loading. We did not score test data for this check.
+After correcting the cross-year holiday feature, we reran the ladder on 2026-11-14.
+The fitted bundle is `models/1ba4b8f0b32c4c0389375a41859d4b2b/`, from MLflow parent
+run `1ba4b8f0b32c4c0389375a41859d4b2b`. The run refreshed
+`data/processed/ladder_metrics.json` and `data/processed/ladder_predictions.parquet`.
+Reloading the bundle reproduced all **125,429 validation rows exactly**, including
+every MLP quantile. We did not score test data in this rerun or reload check.
 
 We can use that saved bundle directly, without another fit:
 
@@ -256,7 +254,7 @@ from smartops.features import load_model_rows
 from smartops.ladder_models import load_ladder_models
 
 processed = Path("data/processed")
-models = load_ladder_models(Path("models/67e42a16932940718af65147f85a874c"))
+models = load_ladder_models(Path("models/1ba4b8f0b32c4c0389375a41859d4b2b"))
 rows = load_model_rows(processed / "features.parquet")  # excludes test by default
 validation = rows.loc[
     rows["period"].eq("val") & rows["y"].notna() & rows["beds_lag1"].notna()
@@ -280,16 +278,18 @@ Older runs saved predictions and metrics but not fitted weights. We cannot recov
 those weights from predictions. A new fit creates a new bundle and run ID; it does not
 retroactively add models to an earlier evaluation.
 
-The saved handoff bundle and reported scores predate the cross-year holiday-flag fix.
-The loader now checks each day's calendar year, so a week starting 2023-12-31 correctly
-includes New Year's Day 2024. We have not refitted these weights or rescored test after
-that correction; future fits will use the corrected feature.
+The 2026-11-14 bundle and validation scores use the corrected cross-year holiday flag.
+The loader checks each day's calendar year, so a week starting 2023-12-31 includes
+New Year's Day 2024. The test results below still come from the earlier pre-fix fit;
+we have not rescored test after this correction.
 
 ## Final test results
 
-We evaluated the official ladder on **2023-07-02 through 2024-04-21**.
+The earlier official test evaluation covered **2023-07-02 through 2024-04-21**.
+Its models were fitted before the cross-year holiday correction and its test metrics
+remain historical; they have not been refreshed by the 2026-11-14 validation rerun.
 Models were fitted on training weeks from training hospitals only, with iteration/checkpoint
-selection on validation. The reproduced validation scores match the previous run exactly.
+selection on validation.
 Weights, preprocessing and the persistence error quantile stayed fixed for test; there was
 no train-plus-validation refit or test-based weight updates in this procedure. Each
 forecast is one week ahead and may use observations from earlier test weeks as
